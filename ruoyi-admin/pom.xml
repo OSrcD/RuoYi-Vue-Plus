@@ -90,7 +90,7 @@
         <!--  thek模块  -->
         <dependency>
             <groupId>com.thek</groupId>
-            <artifactId>thek-business</artifactId>
+            <artifactId>ruoyi-business</artifactId>
         </dependency>
 
         <!--  工作流模块  -->

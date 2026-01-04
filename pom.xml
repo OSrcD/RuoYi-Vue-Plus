@@ -353,7 +353,7 @@
 
             <dependency>
                 <groupId>com.thek</groupId>
-                <artifactId>thek-business</artifactId>
+                <artifactId>ruoyi-business</artifactId>
                 <version>${revision}</version>
             </dependency>
 
