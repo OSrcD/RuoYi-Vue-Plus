@@ -29,9 +29,9 @@ public class BizMediaAccountVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 自媒体账号编号
+     * 自媒体账号ID
      */
-    @ExcelProperty(value = "自媒体账号编号")
+    @ExcelProperty(value = "自媒体账号ID")
     private Long id;
 
     /**
@@ -47,16 +47,17 @@ public class BizMediaAccountVo implements Serializable {
     private String accountName;
 
     /**
-     * 平台
+     * 平台（0小红书 1抖音 2快手 3闲鱼 4视频号 5B站 6其他）
      */
     @ExcelProperty(value = "平台", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "biz_account_platform")
     private Long accountPlatform;
 
     /**
-     * 账号类型
+     * 账号类型（0个人 1企业 2机构 3其他）
      */
-    @ExcelProperty(value = "账号类型")
+    @ExcelProperty(value = "账号类型", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(readConverterExp = "0=个人,1=企业,2=机构,3=其他")
     private Long accountType;
 
     /**
@@ -66,35 +67,29 @@ public class BizMediaAccountVo implements Serializable {
     private String accountUrl;
 
     /**
+     * 手机号码
+     */
+    @ExcelProperty(value = "手机号码")
+    private String phoneNumber;
+
+    /**
      * 粉丝数
      */
     @ExcelProperty(value = "粉丝数")
     private Long followerCount;
 
     /**
-     * 状态
+     * 状态（0停用 1启用 2封禁）
      */
     @ExcelProperty(value = "状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "sys_normal_disable")
     private Long status;
 
     /**
-     * 描述
+     * 账号描述
      */
-    @ExcelProperty(value = "描述")
+    @ExcelProperty(value = "账号描述")
     private String remark;
-
-    /**
-     * 创建时间
-     */
-    @ExcelProperty(value = "创建时间")
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    @ExcelProperty(value = "更新时间")
-    private Date updateTime;
 
 
 }

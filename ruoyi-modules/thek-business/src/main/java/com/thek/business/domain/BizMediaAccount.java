@@ -22,7 +22,7 @@ public class BizMediaAccount extends TenantEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 自媒体账号编号
+     * 自媒体账号ID
      */
     @TableId(value = "id")
     private Long id;
@@ -38,12 +38,12 @@ public class BizMediaAccount extends TenantEntity {
     private String accountName;
 
     /**
-     * 平台
+     * 平台（0小红书 1抖音 2快手 3闲鱼 4视频号 5B站 6其他）
      */
     private Long accountPlatform;
 
     /**
-     * 账号类型
+     * 账号类型（0个人 1企业 2机构 3其他）
      */
     private Long accountType;
 
@@ -53,17 +53,22 @@ public class BizMediaAccount extends TenantEntity {
     private String accountUrl;
 
     /**
+     * 手机号码
+     */
+    private String phoneNumber;
+
+    /**
      * 粉丝数
      */
     private Long followerCount;
 
     /**
-     * 状态
+     * 状态（0停用 1启用 2封禁）
      */
     private Long status;
 
     /**
-     * 描述
+     * 账号描述
      */
     private String remark;
 
