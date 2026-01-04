@@ -87,6 +87,12 @@
             <artifactId>ruoyi-demo</artifactId>
         </dependency>
 
+        <!--  thek模块  -->
+        <dependency>
+            <groupId>com.thek</groupId>
+            <artifactId>thek-business</artifactId>
+        </dependency>
+
         <!--  工作流模块  -->
         <dependency>
             <groupId>org.dromara</groupId>

@@ -7,10 +7,10 @@ import org.springframework.boot.context.metrics.buffering.BufferingApplicationSt
 /**
  * 启动程序
  *
- * @author Lion Li
+ * @author Lion Li09
  */
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"org.dromara","com.thek"})
 public class DromaraApplication {
 
     public static void main(String[] args) {
