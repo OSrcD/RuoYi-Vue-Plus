@@ -2,6 +2,7 @@ package com.ruoyi.business.controller;
 
 import java.util.List;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
@@ -19,6 +20,7 @@ import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.excel.utils.ExcelUtil;
 import com.ruoyi.business.domain.vo.BizPromptCommentVo;
 import com.ruoyi.business.domain.bo.BizPromptCommentBo;
+import com.ruoyi.business.domain.bo.QueryUnusedCommentBo;
 import com.ruoyi.business.service.IBizPromptCommentService;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 
@@ -63,8 +65,7 @@ public class BizPromptCommentController extends BaseController {
      */
     @SaCheckPermission("business:promptComment:query")
     @GetMapping("/{commentId}")
-    public R<BizPromptCommentVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long commentId) {
+    public R<BizPromptCommentVo> getInfo(@NotNull(message = "主键不能为空") @PathVariable Long commentId) {
         return R.ok(bizPromptCommentService.queryById(commentId));
     }
 
@@ -98,8 +99,18 @@ public class BizPromptCommentController extends BaseController {
     @SaCheckPermission("business:promptComment:remove")
     @Log(title = "提示词评论", businessType = BusinessType.DELETE)
     @DeleteMapping("/{commentIds}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] commentIds) {
+    public R<Void> remove(@NotEmpty(message = "主键不能为空") @PathVariable Long[] commentIds) {
         return toAjax(bizPromptCommentService.deleteWithValidByIds(List.of(commentIds), true));
+    }
+
+    /**
+     * 查询未使用的提示词评论列表
+     *
+     */
+//    @SaCheckPermission("business:promptComment:list")
+    @SaIgnore
+    @PostMapping("/unusedList")
+    public R<List<BizPromptCommentVo>> queryUnusedList(@Validated @RequestBody QueryUnusedCommentBo bo) {
+        return R.ok(bizPromptCommentService.queryUnusedList(bo.getMediaAccountId(), bo.getPlatform()));
     }
 }

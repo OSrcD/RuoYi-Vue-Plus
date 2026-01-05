@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -49,4 +50,15 @@ public class BizPromptCommentVo implements Serializable {
     private String remark;
 
 
+    /**
+     * 创建时间
+     */
+    @ExcelProperty(value = "创建时间")
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    @ExcelProperty(value = "更新时间")
+    private Date updateTime;
 }

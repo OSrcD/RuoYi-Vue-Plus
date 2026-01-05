@@ -43,5 +43,9 @@ public class BizPromptCommentCompleteBo extends BaseEntity {
      */
     private String remark;
 
+    /**
+     * 租户编号
+     */
+    private String tenantId;
 
 }

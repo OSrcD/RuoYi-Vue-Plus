@@ -23,7 +23,7 @@ server:
 
 captcha:
   # 是否启用验证码校验
-  enable: true
+  enable: false
   # 验证码类型 math 数组计算 char 字符验证
   type: MATH
   # line 线段干扰 circle 圆圈干扰 shear 扭曲干扰
@@ -185,7 +185,7 @@ api-decrypt:
 springdoc:
   api-docs:
     # 是否开启接口文档
-    enabled: true
+    enabled: false
   info:
     # 标题
     title: '标题：RuoYi-Vue-Plus多租户管理系统_接口文档'
@@ -240,7 +240,7 @@ management:
 
 --- # 默认/推荐使用sse推送
 sse:
-  enabled: true
+  enabled: false
   path: /resource/sse
 
 --- # websocket
@@ -255,7 +255,7 @@ websocket:
 --- # warm-flow工作流配置
 warm-flow:
   # 是否开启工作流，默认true
-  enabled: true
+  enabled: false
   # 是否开启设计器ui
   ui: true
   # 是否显示流程图顶部文字

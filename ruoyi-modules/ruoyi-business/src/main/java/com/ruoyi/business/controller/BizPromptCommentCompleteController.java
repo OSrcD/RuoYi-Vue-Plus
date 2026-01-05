@@ -2,6 +2,7 @@ package com.ruoyi.business.controller;
 
 import java.util.List;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
@@ -71,7 +72,8 @@ public class BizPromptCommentCompleteController extends BaseController {
     /**
      * 新增已评论
      */
-    @SaCheckPermission("business:promptCommentComplete:add")
+//    @SaCheckPermission("business:promptCommentComplete:add")
+    @SaIgnore
     @Log(title = "已评论", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -82,7 +84,8 @@ public class BizPromptCommentCompleteController extends BaseController {
     /**
      * 修改已评论
      */
-    @SaCheckPermission("business:promptCommentComplete:edit")
+//    @SaCheckPermission("business:promptCommentComplete:edit")
+    @SaIgnore
     @Log(title = "已评论", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -102,4 +105,12 @@ public class BizPromptCommentCompleteController extends BaseController {
                           @PathVariable Long[] commentCompleteIds) {
         return toAjax(bizPromptCommentCompleteService.deleteWithValidByIds(List.of(commentCompleteIds), true));
     }
+
+    @SaIgnore
+    @RepeatSubmit()
+    @PostMapping("/editComment")
+    public R<Void> editComment(@Validated(EditGroup.class) @RequestBody BizPromptCommentCompleteBo bo) {
+        return toAjax(bizPromptCommentCompleteService.updateByBo(bo));
+    }
+
 }

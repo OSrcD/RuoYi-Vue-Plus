@@ -50,6 +50,14 @@ public interface IBizPromptCommentService {
     Boolean insertByBo(BizPromptCommentBo bo);
 
     /**
+     * 批量新增提示词评论
+     *
+     * @param bos 提示词评论集合
+     * @return 是否新增成功
+     */
+    Boolean insertBatch(List<BizPromptCommentBo> bos);
+
+    /**
      * 修改提示词评论
      *
      * @param bo 提示词评论
@@ -65,4 +73,13 @@ public interface IBizPromptCommentService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 查询未使用的提示词评论列表
+     *
+     * @param mediaAccountId 自媒体账号ID
+     * @param platform       平台（0小红书 1抖音 2快手 3闲鱼 4视频号 5B站 6其他）
+     * @return 提示词评论列表
+     */
+    List<BizPromptCommentVo> queryUnusedList(Long mediaAccountId, Long platform);
 }

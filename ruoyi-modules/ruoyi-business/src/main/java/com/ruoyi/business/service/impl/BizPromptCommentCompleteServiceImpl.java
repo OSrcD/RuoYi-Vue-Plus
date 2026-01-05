@@ -87,6 +87,7 @@ public class BizPromptCommentCompleteServiceImpl implements IBizPromptCommentCom
     @Override
     public Boolean insertByBo(BizPromptCommentCompleteBo bo) {
         BizPromptCommentComplete add = MapstructUtils.convert(bo, BizPromptCommentComplete.class);
+        add.setTenantId(bo.getTenantId());
         validEntityBeforeSave(add);
         boolean flag = baseMapper.insert(add) > 0;
         if (flag) {

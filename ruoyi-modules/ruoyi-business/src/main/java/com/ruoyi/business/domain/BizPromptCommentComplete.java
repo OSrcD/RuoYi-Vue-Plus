@@ -53,6 +53,4 @@ public class BizPromptCommentComplete extends TenantEntity {
      */
     @TableLogic
     private String delFlag;
-
-
 }
