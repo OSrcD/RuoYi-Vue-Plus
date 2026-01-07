@@ -9,10 +9,12 @@ import jep.SharedInterpreter;
 public class PollinationsAI {
 
     static {
-//        MainInterpreter.setJepLibraryPath("C:/Users/CuiMa/anaconda3/envs/gpt4free/Lib/site-packages/jep/jep.dll");
-        MainInterpreter.setJepLibraryPath("/usr/local/lib64/python3.11/site-packages/jep/libjep.so");
         PyConfig pyConfig = new PyConfig();
+
+//        MainInterpreter.setJepLibraryPath("C:/Users/CuiMa/anaconda3/envs/gpt4free/Lib/site-packages/jep/jep.dll");
 //        pyConfig.setPythonHome("C:/Users/CuiMa/anaconda3/envs/gpt4free");
+
+        MainInterpreter.setJepLibraryPath("/usr/local/lib64/python3.11/site-packages/jep/libjep.so");
         pyConfig.setPythonHome("/usr");
     }
 
@@ -24,6 +26,7 @@ public class PollinationsAI {
             // 导入依赖
             interpreter.exec("import sys");
 //            interpreter.exec("sys.path.append('C:/Code/gpt4free')");
+
             interpreter.exec("sys.path.append('/home/gpt4free')");
             interpreter.exec("from g4f.test import test11");
             // 调用 Python 函数

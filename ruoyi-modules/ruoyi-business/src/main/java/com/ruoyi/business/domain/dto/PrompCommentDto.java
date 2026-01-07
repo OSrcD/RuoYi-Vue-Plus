@@ -6,6 +6,5 @@ import java.util.List;
 
 @Data
 public class PrompCommentDto {
-    private String highSimilarityPrediction;
     private List<String> commentList;
 }

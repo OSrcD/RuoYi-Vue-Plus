@@ -33,6 +33,11 @@ public class BizPromptComment extends TenantEntity {
     private Long promptId;
 
     /**
+     * 标题
+     */
+    private String title;
+
+    /**
      * 提示词评论内容
      */
     private String commentContent;

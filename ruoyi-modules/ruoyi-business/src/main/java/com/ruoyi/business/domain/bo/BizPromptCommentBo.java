@@ -33,6 +33,11 @@ public class BizPromptCommentBo extends BaseEntity {
     private Long promptId;
 
     /**
+     * 标题
+     */
+    private String title;
+
+    /**
      * 提示词评论内容
      */
     @NotBlank(message = "提示词评论内容不能为空", groups = { AddGroup.class, EditGroup.class })

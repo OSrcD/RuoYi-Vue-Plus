@@ -11,7 +11,7 @@ import java.io.Serial;
  * 提示词模板对象 biz_prompt_template
  *
  * @author Lion Li
- * @date 2026-01-04
+ * @date 2026-01-07
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -22,7 +22,7 @@ public class BizPromptTemplate extends TenantEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 提示词编号
+     * 提示词ID
      */
     @TableId(value = "prompt_id")
     private Long promptId;
@@ -33,9 +33,14 @@ public class BizPromptTemplate extends TenantEntity {
     private String template;
 
     /**
-     * 提示词分类
+     * 提示词分类（0棋牌 1对象）
      */
     private Long templateType;
+
+    /**
+     * 状态（0停用 1启用 2封禁）
+     */
+    private Long status;
 
     /**
      * 备注

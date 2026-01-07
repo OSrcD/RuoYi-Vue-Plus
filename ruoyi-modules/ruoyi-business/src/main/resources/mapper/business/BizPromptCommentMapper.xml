@@ -7,6 +7,7 @@
         INSERT IGNORE INTO biz_prompt_comment(
             comment_id,
             prompt_id,
+            title,
             comment_content,
             remark,
             version,
@@ -22,6 +23,7 @@
             (
                 #{item.commentId},
                 #{item.promptId},
+                #{item.title},
                 #{item.commentContent},
                 #{item.remark},
                 0,
@@ -41,6 +43,7 @@
         SELECT
             t1.comment_id,
             t1.prompt_id,
+            t1.title,
             t1.comment_content,
             t1.remark,
             t1.version,

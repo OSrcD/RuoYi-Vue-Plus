@@ -174,3 +174,16 @@ INSERT INTO `ry-vue`.sys_dict_data (dict_code, tenant_id, dict_sort, dict_label,
 INSERT INTO `ry-vue`.sys_dict_data (dict_code, tenant_id, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, create_dept, create_by, create_time, update_by, update_time, remark) VALUES (2007783434273136641, '000000', 0, '其他', '6', 'biz_account_platform', '', 'primary', 'N', 103, 1, '2026-01-04 19:57:28', 1, '2026-01-04 19:57:38', '其他');
 INSERT INTO `ry-vue`.sys_dict_data (dict_code, tenant_id, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, create_dept, create_by, create_time, update_by, update_time, remark) VALUES (2007803012877139969, '000000', 0, '棋牌', '0', 'biz_prompt_template_type', '', 'primary', 'N', 103, 1, '2026-01-04 21:15:16', 1, '2026-01-04 21:15:16', '');
 INSERT INTO `ry-vue`.sys_dict_data (dict_code, tenant_id, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, create_dept, create_by, create_time, update_by, update_time, remark) VALUES (2007803073652604929, '000000', 0, '对象', '1', 'biz_prompt_template_type', '', 'primary', 'N', 103, 1, '2026-01-04 21:15:31', 1, '2026-01-04 21:15:31', '');
+
+
+
+alter table biz_prompt_comment
+    add title varchar(128) null comment '标题' after prompt_id;
+
+alter table biz_prompt_template
+    add status int default 1 null comment '状态（0停用 1启用 2封禁）' after template_type;
+
+alter table biz_prompt_comment
+    add constraint biz_prompt_comment_pk
+        unique (title);
+

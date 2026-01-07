@@ -13,7 +13,7 @@ import jakarta.validation.constraints.*;
  * 提示词模板业务对象 biz_prompt_template
  *
  * @author Lion Li
- * @date 2026-01-04
+ * @date 2026-01-07
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -21,9 +21,9 @@ import jakarta.validation.constraints.*;
 public class BizPromptTemplateBo extends BaseEntity {
 
     /**
-     * 提示词编号
+     * 提示词ID
      */
-    @NotNull(message = "提示词编号不能为空", groups = { EditGroup.class })
+    @NotNull(message = "提示词ID不能为空", groups = { EditGroup.class })
     private Long promptId;
 
     /**
@@ -33,10 +33,15 @@ public class BizPromptTemplateBo extends BaseEntity {
     private String template;
 
     /**
-     * 提示词分类
+     * 提示词分类（0棋牌 1对象）
      */
-    @NotNull(message = "提示词分类不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotNull(message = "提示词分类（0棋牌 1对象）不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long templateType;
+
+    /**
+     * 状态（0停用 1启用 2封禁）
+     */
+    private Long status;
 
     /**
      * 备注
