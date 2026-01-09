@@ -169,11 +169,11 @@ public class BizPromptCommentServiceImpl implements IBizPromptCommentService {
     @Override
     public List<BizPromptCommentVo> queryUnusedList(Long mediaAccountId, Long platform) {
         List<BizPromptCommentVo> bizPromptCommentVos = baseMapper.selectUnusedList(mediaAccountId, platform);
-        for (BizPromptCommentVo bizPromptCommentVo : bizPromptCommentVos) {
-            if (platform != 2) {
-                bizPromptCommentVo.setCommentContent(ZeroWidthBypasser.obfuscate(bizPromptCommentVo.getCommentContent()));
-            }
-        }
+//        for (BizPromptCommentVo bizPromptCommentVo : bizPromptCommentVos) {
+//            if (platform != 2) {
+//                bizPromptCommentVo.setCommentContent(ZeroWidthBypasser.obfuscate(bizPromptCommentVo.getCommentContent()));
+//            }
+//        }
         return bizPromptCommentVos;
     }
 
