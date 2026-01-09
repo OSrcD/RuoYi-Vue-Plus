@@ -1,11 +1,10 @@
 package com.ruoyi.business.job;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.ruoyi.business.domain.BizPromptTemplate;
-import com.ruoyi.business.domain.bo.CommentSimilarityBo;
-import com.ruoyi.business.domain.bo.PrompCommentSimBo;
+import com.ruoyi.business.domain.bo.*;
 import com.ruoyi.business.domain.dto.PrompCommentDto;
-import com.ruoyi.business.domain.bo.BizPromptCommentBo;
 import com.ruoyi.business.mapper.BizPromptTemplateMapper;
 import com.ruoyi.business.service.IBizPromptCommentService;
 import com.ruoyi.business.python.g4f.PollinationsAI;
@@ -61,6 +60,27 @@ public class MediaPromptJob {
                         bo.setPromptId(bizPromptTemplate.getPromptId());
                         bo.setTitle(commentSimilarityBo.getSearchTile());
                         bo.setCommentContent(commentSimilarityBo.getComments());
+                        bo.setTenantId(bizPromptTemplate.getTenantId());
+                        boList.add(bo);
+                    }
+                    Boolean result = iBizPromptCommentService.insertBatch(boList);
+                    log.info("插入的情况:{}", result);
+                }
+            } else if (bizPromptTemplate.getTemplateType() == 3) { // AI操作系列
+                String aiOperatePrompt = PollinationsAI.getCommentByPrompt(bizPromptTemplate.getTemplate());
+                BeanOutputConverter<AIOperateListBo> converter = new BeanOutputConverter<>(AIOperateListBo.class);
+                AIOperateListBo convert = converter.convert(aiOperatePrompt);
+                log.info("获取到的评论内容：{}", convert);
+                if (convert != null && convert.getOperateList() != null) {
+                    List<BizPromptCommentBo> boList = new ArrayList<>();
+                    List<AIOperateSequenceBo> operateList = convert.getOperateList();
+                    long operateGroupId = IdWorker.getId();
+                    for (AIOperateSequenceBo aiOperateSequenceBo : operateList) {
+                        BizPromptCommentBo bo = new BizPromptCommentBo();
+                        bo.setPromptId(bizPromptTemplate.getPromptId());
+                        bo.setCommentContent(aiOperateSequenceBo.getOperate());
+                        bo.setOperateGroupId(operateGroupId);
+                        bo.setRemark("时间段：" + aiOperateSequenceBo.getTimeOfDay() + "，操作时间：" + aiOperateSequenceBo.getCurrentTime());
                         bo.setTenantId(bizPromptTemplate.getTenantId());
                         boList.add(bo);
                     }

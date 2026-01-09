@@ -82,4 +82,6 @@ public interface IBizPromptCommentService {
      * @return 提示词评论列表
      */
     List<BizPromptCommentVo> queryUnusedList(Long mediaAccountId, Long platform);
+
+    List<BizPromptCommentVo> getNextAvailableGroup(Long mediaAccountId, Long platform);
 }

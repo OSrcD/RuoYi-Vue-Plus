@@ -113,4 +113,10 @@ public class BizPromptCommentController extends BaseController {
     public R<List<BizPromptCommentVo>> queryUnusedList(@Validated @RequestBody QueryUnusedCommentBo bo) {
         return R.ok(bizPromptCommentService.queryUnusedList(bo.getMediaAccountId(), bo.getPlatform()));
     }
+
+    @SaIgnore
+    @PostMapping("/unusedListByGroup")
+    public R<List<BizPromptCommentVo>> queryUnusedListByGroup(@Validated @RequestBody QueryUnusedCommentBo bo) {
+        return R.ok(bizPromptCommentService.getNextAvailableGroup(bo.getMediaAccountId(), bo.getPlatform()));
+    }
 }

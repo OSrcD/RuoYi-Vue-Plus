@@ -28,8 +28,21 @@ public interface BizPromptCommentMapper extends BaseMapperPlus<BizPromptComment,
      * 查询未使用的提示词评论列表
      *
      * @param mediaAccountId 自媒体账号ID
-     * @param platform 平台
+     * @param platform       平台
      * @return 提示词评论列表
      */
     List<BizPromptCommentVo> selectUnusedList(@Param("mediaAccountId") Long mediaAccountId, @Param("platform") Long platform);
+
+
+
+    /**
+     * 获取一组未使用的评论数据
+     * @param mediaAccountId 媒体账号ID
+     * @param platform 平台类型
+     * @return 评论明细列表
+     */
+    List<BizPromptCommentVo> selectUnusedListByOneGroup(
+        @Param("mediaAccountId") Long mediaAccountId,
+        @Param("platform") Long platform
+    );
 }

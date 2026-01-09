@@ -187,3 +187,7 @@ alter table biz_prompt_comment
     add constraint biz_prompt_comment_pk
         unique (title);
 
+
+
+alter table biz_prompt_comment
+    add operate_group_id bigint null comment '操作分组ID' after prompt_id;

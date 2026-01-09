@@ -8,14 +8,21 @@ import jep.SharedInterpreter;
 
 public class PollinationsAI {
 
+//    private static String jepLibraryPath = "C:/Users/CuiMa/anaconda3/envs/gpt4free/Lib/site-packages/jep/jep.dll";
+//    private static String pythonHome = "C:/Users/CuiMa/anaconda3/envs/gpt4free";
+//    private static String sysPathAppend = "sys.path.append('C:/Code/gpt4free')";
+
+    private static String jepLibraryPath = "/usr/local/lib64/python3.11/site-packages/jep/libjep.so";
+    private static String pythonHome = "/usr";
+    private static String sysPathAppend = "sys.path.append('/home/gpt4free')";
+
+
     static {
         PyConfig pyConfig = new PyConfig();
 
-//        MainInterpreter.setJepLibraryPath("C:/Users/CuiMa/anaconda3/envs/gpt4free/Lib/site-packages/jep/jep.dll");
-//        pyConfig.setPythonHome("C:/Users/CuiMa/anaconda3/envs/gpt4free");
+        MainInterpreter.setJepLibraryPath(jepLibraryPath);
+        pyConfig.setPythonHome(pythonHome);
 
-        MainInterpreter.setJepLibraryPath("/usr/local/lib64/python3.11/site-packages/jep/libjep.so");
-        pyConfig.setPythonHome("/usr");
     }
 
     public static String getCommentByPrompt(String userPrompt) {
@@ -25,9 +32,7 @@ public class PollinationsAI {
 
             // 导入依赖
             interpreter.exec("import sys");
-//            interpreter.exec("sys.path.append('C:/Code/gpt4free')");
-
-            interpreter.exec("sys.path.append('/home/gpt4free')");
+            interpreter.exec(sysPathAppend);
             interpreter.exec("from g4f.test import test11");
             // 调用 Python 函数
             // 使用 invoke 直接传参，避免拼接字符串产生的注入风险或格式问题

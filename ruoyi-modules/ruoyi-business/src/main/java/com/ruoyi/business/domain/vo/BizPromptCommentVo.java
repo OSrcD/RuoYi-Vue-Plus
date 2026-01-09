@@ -38,6 +38,13 @@ public class BizPromptCommentVo implements Serializable {
     private Long promptId;
 
     /**
+     * 操作分组ID
+     */
+    @ExcelProperty(value = "操作分组ID")
+    private Long operateGroupId;
+
+
+    /**
      * 标题
      */
     @ExcelProperty(value = "标题")

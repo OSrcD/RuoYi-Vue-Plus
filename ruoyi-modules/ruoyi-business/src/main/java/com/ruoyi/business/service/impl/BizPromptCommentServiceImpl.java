@@ -1,5 +1,6 @@
 package com.ruoyi.business.service.impl;
 
+import com.ruoyi.business.utils.ZeroWidthBypasser;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -77,8 +78,9 @@ public class BizPromptCommentServiceImpl implements IBizPromptCommentService {
         LambdaQueryWrapper<BizPromptComment> lqw = Wrappers.lambdaQuery();
         lqw.orderByAsc(BizPromptComment::getCommentId);
         lqw.eq(bo.getPromptId() != null, BizPromptComment::getPromptId, bo.getPromptId());
-        lqw.eq(StringUtils.isNotBlank(bo.getCommentContent()), BizPromptComment::getCommentContent,
-                bo.getCommentContent());
+        lqw.eq(bo.getOperateGroupId() != null, BizPromptComment::getOperateGroupId, bo.getOperateGroupId());
+        lqw.eq(StringUtils.isNotBlank(bo.getTitle()), BizPromptComment::getTitle, bo.getTitle());
+        lqw.eq(StringUtils.isNotBlank(bo.getCommentContent()), BizPromptComment::getCommentContent, bo.getCommentContent());
         return lqw;
     }
 
@@ -166,6 +168,20 @@ public class BizPromptCommentServiceImpl implements IBizPromptCommentService {
      */
     @Override
     public List<BizPromptCommentVo> queryUnusedList(Long mediaAccountId, Long platform) {
-        return baseMapper.selectUnusedList(mediaAccountId, platform);
+        List<BizPromptCommentVo> bizPromptCommentVos = baseMapper.selectUnusedList(mediaAccountId, platform);
+        for (BizPromptCommentVo bizPromptCommentVo : bizPromptCommentVos) {
+            if (platform != 2) {
+                bizPromptCommentVo.setCommentContent(ZeroWidthBypasser.obfuscate(bizPromptCommentVo.getCommentContent()));
+            }
+        }
+        return bizPromptCommentVos;
+    }
+
+    @Override
+    public List<BizPromptCommentVo> getNextAvailableGroup(Long mediaAccountId, Long platform) {
+        // 直接调用，MyBatis 会返回该组下的所有记录
+        List<BizPromptCommentVo> list = baseMapper.selectUnusedListByOneGroup(mediaAccountId, platform);
+        // 如果找不到数据，list 会是一个空集合 []
+        return list;
     }
 }
