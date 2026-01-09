@@ -12,7 +12,7 @@ public class ZeroWidthBypasser {
 
     // 丰富的小红书风格表情池（包含你提供的和常用的）
     private static final String[] EMOJI_POOL = {
-        "🀄️", "👌", "💰", "🏠", "✨", "🫧", "🎈", "🔥"
+        "🀄️", "👌", "💰", "🏠", "✨", "🎈", "🔥"
     };
 
 
