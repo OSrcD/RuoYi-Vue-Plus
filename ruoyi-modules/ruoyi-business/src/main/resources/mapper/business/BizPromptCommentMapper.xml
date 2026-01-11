@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.business.mapper.BizPromptCommentMapper">
+<mapper namespace="org.dromara.business.mapper.BizPromptCommentMapper">
     <insert id="insertIgnoreBatch">
         INSERT IGNORE INTO biz_prompt_comment(
             comment_id,
@@ -41,7 +41,7 @@
     </insert>
 
 
-    <select id="selectUnusedList" resultType="com.ruoyi.business.domain.vo.BizPromptCommentVo">
+    <select id="selectUnusedList" resultType="org.dromara.business.domain.vo.BizPromptCommentVo">
         SELECT
             t1.comment_id,
             t1.prompt_id,
@@ -65,7 +65,7 @@
     </select>
 
 
-    <select id="selectUnusedListByOneGroup" resultType="com.ruoyi.business.domain.vo.BizPromptCommentVo">
+    <select id="selectUnusedListByOneGroup" resultType="org.dromara.business.domain.vo.BizPromptCommentVo">
         SELECT
             t1.comment_id,
             t1.prompt_id,

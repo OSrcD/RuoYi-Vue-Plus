@@ -1,0 +1,78 @@
+package org.dromara.business.domain.bo;
+
+import org.dromara.business.domain.BizMediaAccount;
+import org.dromara.common.mybatis.core.domain.BaseEntity;
+import org.dromara.common.core.validate.AddGroup;
+import org.dromara.common.core.validate.EditGroup;
+import io.github.linpeilie.annotations.AutoMapper;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import jakarta.validation.constraints.*;
+
+/**
+ * 自媒体账号业务对象 biz_media_account
+ *
+ * @author Lion Li
+ * @date 2026-01-04
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@AutoMapper(target = BizMediaAccount.class, reverseConvertGenerate = false)
+public class BizMediaAccountBo extends BaseEntity {
+
+    /**
+     * 自媒体账号ID
+     */
+    @NotNull(message = "自媒体账号ID不能为空", groups = { EditGroup.class })
+    private Long id;
+
+    /**
+     * 账号ID
+     */
+    @NotBlank(message = "账号ID不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String accountId;
+
+    /**
+     * 账号名称
+     */
+    @NotBlank(message = "账号名称不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String accountName;
+
+    /**
+     * 平台（0小红书 1抖音 2快手 3闲鱼 4视频号 5B站 6其他）
+     */
+    @NotNull(message = "平台（0小红书 1抖音 2快手 3闲鱼 4视频号 5B站 6其他）不能为空", groups = { AddGroup.class, EditGroup.class })
+    private Long accountPlatform;
+
+    /**
+     * 账号类型（0个人 1企业 2机构 3其他）
+     */
+    private Long accountType;
+
+    /**
+     * 账号主页链接
+     */
+    private String accountUrl;
+
+    /**
+     * 手机号码
+     */
+    private String phoneNumber;
+
+    /**
+     * 粉丝数
+     */
+    private Long followerCount;
+
+    /**
+     * 状态（0停用 1启用 2封禁）
+     */
+    private Long status;
+
+    /**
+     * 账号描述
+     */
+    private String remark;
+
+
+}
