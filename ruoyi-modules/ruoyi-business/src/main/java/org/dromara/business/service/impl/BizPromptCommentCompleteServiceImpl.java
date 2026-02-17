@@ -1,7 +1,9 @@
 package org.dromara.business.service.impl;
 
 import org.dromara.common.core.utils.MapstructUtils;
+import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+
 import org.dromara.common.mybatis.core.page.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -18,6 +20,8 @@ import org.dromara.business.service.IBizPromptCommentCompleteService;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 已评论Service业务层处理
@@ -31,6 +35,7 @@ import java.util.Collection;
 public class BizPromptCommentCompleteServiceImpl implements IBizPromptCommentCompleteService {
 
     private final BizPromptCommentCompleteMapper baseMapper;
+    private final org.dromara.business.mapper.BizPromptCommentMapper bizPromptCommentMapper;
 
     /**
      * 查询已评论
@@ -39,7 +44,7 @@ public class BizPromptCommentCompleteServiceImpl implements IBizPromptCommentCom
      * @return 已评论
      */
     @Override
-    public BizPromptCommentCompleteVo queryById(Long commentCompleteId){
+    public BizPromptCommentCompleteVo queryById(Long commentCompleteId) {
         return baseMapper.selectVoById(commentCompleteId);
     }
 
@@ -75,6 +80,10 @@ public class BizPromptCommentCompleteServiceImpl implements IBizPromptCommentCom
         lqw.orderByAsc(BizPromptCommentComplete::getCommentCompleteId);
         lqw.eq(bo.getCommentId() != null, BizPromptCommentComplete::getCommentId, bo.getCommentId());
         lqw.eq(bo.getMediaAccountId() != null, BizPromptCommentComplete::getMediaAccountId, bo.getMediaAccountId());
+        lqw.like(StringUtils.isNotBlank(bo.getXhsNoteInfo()), BizPromptCommentComplete::getXhsNoteInfo,
+                bo.getXhsNoteInfo());
+        lqw.eq(bo.getCheckStatus() != null, BizPromptCommentComplete::getCheckStatus, bo.getCheckStatus());
+        lqw.eq(bo.getCommentStatus() != null, BizPromptCommentComplete::getCommentStatus, bo.getCommentStatus());
         return lqw;
     }
 
@@ -112,8 +121,8 @@ public class BizPromptCommentCompleteServiceImpl implements IBizPromptCommentCom
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(BizPromptCommentComplete entity){
-        //TODO 做一些数据校验,如唯一约束
+    private void validEntityBeforeSave(BizPromptCommentComplete entity) {
+        // TODO 做一些数据校验,如唯一约束
     }
 
     /**
@@ -125,9 +134,64 @@ public class BizPromptCommentCompleteServiceImpl implements IBizPromptCommentCom
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
-            //TODO 做一些业务上的校验,判断是否需要校验
+        if (isValid) {
+            // TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;
+    }
+
+    /**
+     * 分页查询未检测已评论列表
+     */
+    @Override
+    public TableDataInfo<BizPromptCommentCompleteVo> queryCheckPageList(BizPromptCommentCompleteBo bo,
+            PageQuery pageQuery) {
+        Page<BizPromptCommentCompleteVo> result = baseMapper.selectCheckList(pageQuery.build(), bo);
+        Pattern pattern = Pattern.compile("https?://[a-zA-Z0-9./]+");
+        for (BizPromptCommentCompleteVo vo : result.getRecords()) {
+            if (StringUtils.isNotBlank(vo.getXhsNoteInfo())) {
+                Matcher matcher = pattern.matcher(vo.getXhsNoteInfo());
+                if (matcher.find()) {
+                    vo.setNoteUrl(matcher.group());
+                }
+            }
+        }
+        return TableDataInfo.build(result);
+    }
+
+    /**
+     * 更新检测结果
+     */
+    @Override
+    public Boolean updateCheckResult(BizPromptCommentCompleteBo bo) {
+        // 1. 更新 biz_prompt_comment_complete 表的 check_status
+        BizPromptCommentComplete complete = new BizPromptCommentComplete();
+        complete.setCommentCompleteId(bo.getCommentCompleteId());
+        complete.setCheckStatus(1);
+        if (bo.getCommentStatus() != null) {
+            complete.setCommentStatus(bo.getCommentStatus());
+        } else if (bo.getIsIntercept() != null) {
+            complete.setCommentStatus(Boolean.TRUE.equals(bo.getIsIntercept()) ? 1 : 0);
+        }
+        int updateComplete = baseMapper.updateById(complete);
+
+        // 2. 更新 biz_prompt_comment 表的计数
+        if (bo.getCommentId() != null) {
+            org.dromara.business.domain.BizPromptComment comment = bizPromptCommentMapper.selectById(bo.getCommentId());
+            if (comment != null) {
+                if (Boolean.TRUE.equals(bo.getIsIntercept())) {
+                    // 吞评,增加吞评次数
+                    comment.setXhsInterceptCount(
+                            (comment.getXhsInterceptCount() == null ? 0 : comment.getXhsInterceptCount()) + 1);
+                } else {
+                    // 正常,增加非吞评次数
+                    comment.setXhsNormalCount(
+                            (comment.getXhsNormalCount() == null ? 0 : comment.getXhsNormalCount()) + 1);
+                }
+                bizPromptCommentMapper.updateById(comment);
+            }
+        }
+
+        return updateComplete > 0;
     }
 }

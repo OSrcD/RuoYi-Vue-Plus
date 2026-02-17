@@ -53,4 +53,19 @@ public class BizPromptCommentComplete extends TenantEntity {
      */
     @TableLogic
     private String delFlag;
+
+    /**
+     * 小红书笔记信息
+     */
+    private String xhsNoteInfo;
+
+    /**
+     * 检查状态（0未检查 1已检查）
+     */
+    private Integer checkStatus;
+
+    /**
+     * 评论状态（0正常 1吞评）
+     */
+    private Integer commentStatus;
 }

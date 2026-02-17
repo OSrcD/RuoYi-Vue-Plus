@@ -18,7 +18,9 @@
             create_time,
             update_by,
             update_time,
-            tenant_id
+            tenant_id,
+            xhs_intercept_count,
+            xhs_normal_count
         ) VALUES
         <foreach collection="list" item="item" separator=",">
             (
@@ -35,7 +37,9 @@
                 #{item.createTime},
                 #{item.updateBy},
                 #{item.updateTime},
-                #{item.tenantId}
+                #{item.tenantId},
+                #{item.xhsInterceptCount},
+                #{item.xhsNormalCount}
             )
         </foreach>
     </insert>
@@ -54,7 +58,9 @@
             t1.create_time,
             t1.update_by,
             t1.update_time,
-            t1.tenant_id
+            t1.tenant_id,
+            t1.xhs_intercept_count,
+            t1.xhs_normal_count
         FROM biz_prompt_comment t1
         LEFT JOIN biz_prompt_comment_complete t2 ON t1.comment_id = t2.comment_id AND t2.media_account_id = #{mediaAccountId}
         LEFT JOIN biz_prompt_template t3 ON t1.prompt_id = t3.prompt_id
@@ -79,7 +85,9 @@
             t1.create_time,
             t1.update_by,
             t1.update_time,
-            t1.tenant_id
+            t1.tenant_id,
+            t1.xhs_intercept_count,
+            t1.xhs_normal_count
         FROM biz_prompt_comment t1
              LEFT JOIN biz_prompt_comment_complete t2_outer ON t1.comment_id = t2_outer.comment_id
             AND t2_outer.media_account_id = #{mediaAccountId}
@@ -99,6 +107,7 @@
             )
         /* 这里的排序确保这一组内的数据按时间展示 */
         ORDER BY t1.comment_id ASC
+
     </select>
 
 </mapper>

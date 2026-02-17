@@ -10,7 +10,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
-
 /**
  * 提示词评论视图对象 biz_prompt_comment
  *
@@ -43,7 +42,6 @@ public class BizPromptCommentVo implements Serializable {
     @ExcelProperty(value = "操作分组ID")
     private Long operateGroupId;
 
-
     /**
      * 标题
      */
@@ -62,7 +60,6 @@ public class BizPromptCommentVo implements Serializable {
     @ExcelProperty(value = "备注")
     private String remark;
 
-
     /**
      * 创建时间
      */
@@ -74,4 +71,16 @@ public class BizPromptCommentVo implements Serializable {
      */
     @ExcelProperty(value = "更新时间")
     private Date updateTime;
+
+    /**
+     * 小红书吞评次数
+     */
+    @ExcelProperty(value = "小红书吞评次数")
+    private Integer xhsInterceptCount;
+
+    /**
+     * 小红书非吞评次数
+     */
+    @ExcelProperty(value = "小红书非吞评次数")
+    private Integer xhsNormalCount;
 }

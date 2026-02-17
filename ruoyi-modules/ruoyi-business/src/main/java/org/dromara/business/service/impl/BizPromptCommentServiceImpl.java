@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
+ * ，
  * 提示词评论Service业务层处理
  *
  * @author Lion Li
@@ -76,12 +77,19 @@ public class BizPromptCommentServiceImpl implements IBizPromptCommentService {
     private LambdaQueryWrapper<BizPromptComment> buildQueryWrapper(BizPromptCommentBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<BizPromptComment> lqw = Wrappers.lambdaQuery();
-        lqw.orderByAsc(BizPromptComment::getCommentId);
+        lqw.orderByDesc(BizPromptComment::getUpdateTime)
+                .orderByDesc(BizPromptComment::getXhsInterceptCount)
+                .orderByDesc(BizPromptComment::getXhsNormalCount)
+                .orderByAsc(BizPromptComment::getCommentId);
         lqw.eq(bo.getPromptId() != null, BizPromptComment::getPromptId, bo.getPromptId());
         lqw.eq(bo.getOperateGroupId() != null, BizPromptComment::getOperateGroupId, bo.getOperateGroupId());
         lqw.eq(StringUtils.isNotBlank(bo.getTitle()), BizPromptComment::getTitle, bo.getTitle());
-        lqw.eq(StringUtils.isNotBlank(bo.getCommentContent()), BizPromptComment::getCommentContent, bo.getCommentContent());
+        lqw.eq(StringUtils.isNotBlank(bo.getCommentContent()), BizPromptComment::getCommentContent,
+                bo.getCommentContent());
+        lqw.eq(bo.getXhsInterceptCount() != null, BizPromptComment::getXhsInterceptCount, bo.getXhsInterceptCount());
+        lqw.eq(bo.getXhsNormalCount() != null, BizPromptComment::getXhsNormalCount, bo.getXhsNormalCount());
         return lqw;
+
     }
 
     /**
@@ -163,7 +171,7 @@ public class BizPromptCommentServiceImpl implements IBizPromptCommentService {
      * 查询未使用的提示词评论列表
      *
      * @param mediaAccountId 自媒体账号ID
-     * @param platform 平台
+     * @param platform       平台
      * @return 提示词评论列表
      */
     @Override
@@ -171,7 +179,8 @@ public class BizPromptCommentServiceImpl implements IBizPromptCommentService {
         List<BizPromptCommentVo> bizPromptCommentVos = baseMapper.selectUnusedList(mediaAccountId, platform);
         for (BizPromptCommentVo bizPromptCommentVo : bizPromptCommentVos) {
             if (platform != 2) {
-                bizPromptCommentVo.setCommentContent(ZeroWidthBypasser.obfuscate(bizPromptCommentVo.getCommentContent()));
+                bizPromptCommentVo
+                        .setCommentContent(ZeroWidthBypasser.obfuscate(bizPromptCommentVo.getCommentContent()));
             }
         }
         return bizPromptCommentVos;

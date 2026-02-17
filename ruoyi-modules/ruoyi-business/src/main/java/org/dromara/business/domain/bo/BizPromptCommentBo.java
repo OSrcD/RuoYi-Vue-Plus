@@ -58,4 +58,14 @@ public class BizPromptCommentBo extends BaseEntity {
      */
     private String tenantId;
 
+    /**
+     * 小红书吞评次数
+     */
+    private Integer xhsInterceptCount;
+
+    /**
+     * 小红书非吞评次数
+     */
+    private Integer xhsNormalCount;
+
 }

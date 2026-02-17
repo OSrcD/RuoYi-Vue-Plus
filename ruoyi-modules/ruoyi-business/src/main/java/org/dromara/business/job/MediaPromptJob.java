@@ -2,7 +2,6 @@ package org.dromara.business.job;
 
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.dromara.business.domain.BizPromptTemplate;
-import com.ruoyi.business.domain.bo.*;
 import org.dromara.business.domain.bo.*;
 import org.dromara.business.domain.dto.PrompCommentDto;
 import org.dromara.business.mapper.BizPromptTemplateMapper;

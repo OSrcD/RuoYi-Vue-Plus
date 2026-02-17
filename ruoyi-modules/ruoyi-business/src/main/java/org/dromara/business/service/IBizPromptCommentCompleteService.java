@@ -65,4 +65,17 @@ public interface IBizPromptCommentCompleteService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 分页查询未检测已评论列表
+     */
+    TableDataInfo<BizPromptCommentCompleteVo> queryCheckPageList(BizPromptCommentCompleteBo bo, PageQuery pageQuery);
+
+    /**
+     * 更新检测结果
+     *
+     * @param bo 包含commentCompleteId, commentId, checkStatus, isIntercept等信息
+     * @return 是否更新成功
+     */
+    Boolean updateCheckResult(BizPromptCommentCompleteBo bo);
 }

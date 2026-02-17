@@ -64,15 +64,14 @@ public class BizPromptCommentCompleteController extends BaseController {
      */
     @SaCheckPermission("business:promptCommentComplete:query")
     @GetMapping("/{commentCompleteId}")
-    public R<BizPromptCommentCompleteVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long commentCompleteId) {
+    public R<BizPromptCommentCompleteVo> getInfo(@NotNull(message = "主键不能为空") @PathVariable Long commentCompleteId) {
         return R.ok(bizPromptCommentCompleteService.queryById(commentCompleteId));
     }
 
     /**
      * 新增已评论
      */
-//    @SaCheckPermission("business:promptCommentComplete:add")
+    // @SaCheckPermission("business:promptCommentComplete:add")
     @SaIgnore
     @Log(title = "已评论", businessType = BusinessType.INSERT)
     @RepeatSubmit()
@@ -84,7 +83,7 @@ public class BizPromptCommentCompleteController extends BaseController {
     /**
      * 修改已评论
      */
-//    @SaCheckPermission("business:promptCommentComplete:edit")
+    // @SaCheckPermission("business:promptCommentComplete:edit")
     @SaIgnore
     @Log(title = "已评论", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
@@ -101,8 +100,7 @@ public class BizPromptCommentCompleteController extends BaseController {
     @SaCheckPermission("business:promptCommentComplete:remove")
     @Log(title = "已评论", businessType = BusinessType.DELETE)
     @DeleteMapping("/{commentCompleteIds}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] commentCompleteIds) {
+    public R<Void> remove(@NotEmpty(message = "主键不能为空") @PathVariable Long[] commentCompleteIds) {
         return toAjax(bizPromptCommentCompleteService.deleteWithValidByIds(List.of(commentCompleteIds), true));
     }
 
@@ -113,4 +111,21 @@ public class BizPromptCommentCompleteController extends BaseController {
         return toAjax(bizPromptCommentCompleteService.updateByBo(bo));
     }
 
+    /**
+     * 查询未检测已评论列表
+     */
+    @SaIgnore
+    @GetMapping("/checkList")
+    public TableDataInfo<BizPromptCommentCompleteVo> checkList(BizPromptCommentCompleteBo bo, PageQuery pageQuery) {
+        return bizPromptCommentCompleteService.queryCheckPageList(bo, pageQuery);
+    }
+
+    /**
+     * 更新检测结果
+     */
+    @SaIgnore
+    @PostMapping("/updateCheckResult")
+    public R<Void> updateCheckResult(@RequestBody BizPromptCommentCompleteBo bo) {
+        return toAjax(bizPromptCommentCompleteService.updateCheckResult(bo));
+    }
 }

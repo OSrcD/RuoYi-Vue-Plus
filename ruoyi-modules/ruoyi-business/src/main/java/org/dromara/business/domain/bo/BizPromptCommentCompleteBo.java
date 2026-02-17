@@ -48,4 +48,23 @@ public class BizPromptCommentCompleteBo extends BaseEntity {
      */
     private String tenantId;
 
+    /**
+     * 小红书笔记信息
+     */
+    private String xhsNoteInfo;
+
+    /**
+     * 检查状态（0未检查 1已检查）
+     */
+    private Integer checkStatus;
+
+    /**
+     * 评论状态（0正常 1吞评）
+     */
+    private Integer commentStatus;
+
+    /**
+     * 是否吞评(true=吞评 false=正常)
+     */
+    private Boolean isIntercept;
 }
