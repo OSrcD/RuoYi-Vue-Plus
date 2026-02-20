@@ -66,6 +66,7 @@
         LEFT JOIN biz_prompt_template t3 ON t1.prompt_id = t3.prompt_id
         WHERE t1.del_flag = '0'
           AND t2.comment_complete_id IS NULL
+          AND t2.del_flag = '0'
           AND t3.template_type = #{platform}
         LIMIT 100
     </select>
