@@ -36,10 +36,10 @@ public class MediaPromptJob {
     // 每秒钟执行一次
     @Scheduled(cron = "* * * * * *")
     public void executeTaskByCron() {
-        List<BizPromptTemplate> bizPromptTemplates = bizPromptTemplateMapper.selectList();
-        for (BizPromptTemplate bizPromptTemplate : bizPromptTemplates) {
-            insertPromptText(bizPromptTemplate);
-        }
+//        List<BizPromptTemplate> bizPromptTemplates = bizPromptTemplateMapper.selectList();
+//        for (BizPromptTemplate bizPromptTemplate : bizPromptTemplates) {
+//            insertPromptText(bizPromptTemplate);
+//        }
     }
 
     private void insertPromptText(BizPromptTemplate bizPromptTemplate) {
