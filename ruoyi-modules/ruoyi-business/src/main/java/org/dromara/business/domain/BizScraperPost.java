@@ -67,6 +67,11 @@ public class BizScraperPost extends TenantEntity {
     private String videoStatus;
 
     /**
+     * 复刻信息 (存储 AI 复刻后的版本数据, JSON 格式)
+     */
+    private String restyleInfo;
+
+    /**
      * 原贴链接
      */
     private String sourceUrl;

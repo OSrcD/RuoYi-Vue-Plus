@@ -31,15 +31,60 @@ public class MediaPromptJob {
     @Autowired
     private IBizPromptTemplateService bizPromptTemplateService;
 
+    @Autowired
+    private org.dromara.business.mapper.BizMediaAccountMapper bizMediaAccountMapper;
+
+    @Autowired
+    private org.dromara.business.mapper.BizPromptCommentMapper bizPromptCommentMapper;
+
+    @Autowired
+    private org.dromara.business.mapper.BizPromptCommentCompleteMapper bizPromptCommentCompleteMapper;
+
+
     // 含义：每小时的第 0 分 0 秒执行
     // @Scheduled(cron = "0 0 * * * *")
     // 每秒钟执行一次
-    @Scheduled(cron = "* * * * * *")
+//    @Scheduled(cron = "* * * * * *")
     public void executeTaskByCron() {
 //        List<BizPromptTemplate> bizPromptTemplates = bizPromptTemplateMapper.selectList();
 //        for (BizPromptTemplate bizPromptTemplate : bizPromptTemplates) {
 //            insertPromptText(bizPromptTemplate);
 //        }
+    }
+
+    // 每分钟查一次，如果这个账号所有的评论列表都用满了，清理biz_prompt_comment_complete下的记录
+    @Scheduled(cron = "0 * * * * ?")
+    public void clearCompletedCommentsJob() {
+        System.out.println("开始执行定期清理已用满评论账号的完成记录任务...");
+        log.info("开始执行定期清理已用满评论账号的完成记录任务...");
+        List<org.dromara.business.domain.BizMediaAccount> accounts = bizMediaAccountMapper.selectList(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>());
+        for (org.dromara.business.domain.BizMediaAccount account : accounts) {
+            String mediaAccountId = account.getAccountId();
+            Long platform = account.getAccountPlatform();
+            System.out.println("mediaAccountId:" + mediaAccountId + " platform:"+ platform);
+            if (platform == null) {
+                continue;
+            }
+            // 检查是否有未使用列表
+            List<org.dromara.business.domain.vo.BizPromptCommentVo> unusedList = bizPromptCommentMapper.selectUnusedList(Long.valueOf(mediaAccountId), platform);
+            System.out.println("size:" + unusedList.size());
+            if (unusedList == null || unusedList.isEmpty()) {
+                // 如果为空，并且complete表里该账号有数据，说明所有有效的评论都已被该账号用完
+                Long count = bizPromptCommentCompleteMapper.selectCount(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<org.dromara.business.domain.BizPromptCommentComplete>()
+                    .eq(org.dromara.business.domain.BizPromptCommentComplete::getMediaAccountId, mediaAccountId)
+                    .ne(org.dromara.business.domain.BizPromptCommentComplete::getXhsNoteInfo, ""));
+                System.out.println("count:" + count);
+                if (count != null && count > 0) {
+                    System.out.println("自媒体账号ID：" + mediaAccountId +" (平台："+platform+") 评论已全部用完，开始将其 completed 记录(存在xhs_note_info)执行逻辑删除");
+                    log.info("自媒体账号ID {} (平台 {}) 评论已全部用完，开始将其 completed 记录(存在xhs_note_info)执行逻辑删除", mediaAccountId, platform);
+                    bizPromptCommentCompleteMapper.delete(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<org.dromara.business.domain.BizPromptCommentComplete>()
+                        .eq(org.dromara.business.domain.BizPromptCommentComplete::getMediaAccountId, mediaAccountId)
+                        .ne(org.dromara.business.domain.BizPromptCommentComplete::getXhsNoteInfo, ""));
+                }
+            }
+        }
+        System.out.println("定期清理已用满评论任务执行结束");
+        log.info("定期清理已用满评论任务执行结束");
     }
 
     private void insertPromptText(BizPromptTemplate bizPromptTemplate) {

@@ -2,6 +2,7 @@ package org.dromara.business.controller;
 
 import java.util.List;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
@@ -39,7 +40,8 @@ public class BizPromptTemplateController extends BaseController {
     /**
      * 查询提示词模板列表
      */
-    @SaCheckPermission("business:promptTemplate:list")
+//    @SaCheckPermission("business:promptTemplate:list")
+    @SaIgnore
     @GetMapping("/list")
     public TableDataInfo<BizPromptTemplateVo> list(BizPromptTemplateBo bo, PageQuery pageQuery) {
         return bizPromptTemplateService.queryPageList(bo, pageQuery);
@@ -48,7 +50,8 @@ public class BizPromptTemplateController extends BaseController {
     /**
      * 导出提示词模板列表
      */
-    @SaCheckPermission("business:promptTemplate:export")
+//    @SaCheckPermission("business:promptTemplate:export")
+    @SaIgnore
     @Log(title = "提示词模板", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(BizPromptTemplateBo bo, HttpServletResponse response) {
@@ -61,7 +64,8 @@ public class BizPromptTemplateController extends BaseController {
      *
      * @param promptId 主键
      */
-    @SaCheckPermission("business:promptTemplate:query")
+//    @SaCheckPermission("business:promptTemplate:query")
+    @SaIgnore
     @GetMapping("/{promptId}")
     public R<BizPromptTemplateVo> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long promptId) {
@@ -71,7 +75,8 @@ public class BizPromptTemplateController extends BaseController {
     /**
      * 新增提示词模板
      */
-    @SaCheckPermission("business:promptTemplate:add")
+//    @SaCheckPermission("business:promptTemplate:add")
+    @SaIgnore
     @Log(title = "提示词模板", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
@@ -82,7 +87,8 @@ public class BizPromptTemplateController extends BaseController {
     /**
      * 修改提示词模板
      */
-    @SaCheckPermission("business:promptTemplate:edit")
+//    @SaCheckPermission("business:promptTemplate:edit")
+    @SaIgnore
     @Log(title = "提示词模板", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
@@ -95,7 +101,8 @@ public class BizPromptTemplateController extends BaseController {
      *
      * @param promptIds 主键串
      */
-    @SaCheckPermission("business:promptTemplate:remove")
+//    @SaCheckPermission("business:promptTemplate:remove")
+    @SaIgnore
     @Log(title = "提示词模板", businessType = BusinessType.DELETE)
     @DeleteMapping("/{promptIds}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")

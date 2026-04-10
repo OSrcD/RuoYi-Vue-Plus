@@ -79,4 +79,21 @@ public class BizScraperPostServiceImpl implements IBizScraperPostService {
             .setVideos(videos)
             .setVideoStatus("0"));
     }
+
+    @Override
+    public com.baomidou.mybatisplus.extension.plugins.pagination.Page<BizScraperPost> selectPageList(Integer pageNum, Integer pageSize, String platform, String keyword) {
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<BizScraperPost> page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(pageNum, pageSize);
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<BizScraperPost> lqw = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        if (platform != null) lqw.eq(BizScraperPost::getPlatform, platform);
+        if (keyword != null) lqw.like(BizScraperPost::getTitle, keyword).or().like(BizScraperPost::getContent, keyword);
+        lqw.orderByDesc(BizScraperPost::getCreateTime);
+        return baseMapper.selectPage(page, lqw);
+    }
+
+    @Override
+    public void updateRestyleInfo(Long scraperId, String restyleInfo) {
+        baseMapper.updateById(new BizScraperPost()
+            .setScraperId(scraperId)
+            .setRestyleInfo(restyleInfo));
+    }
 }

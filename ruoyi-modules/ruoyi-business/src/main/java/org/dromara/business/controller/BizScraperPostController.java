@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * 自动化数据采集 业务控制器
+ * 自动化素材采集 业务控制器
  */
 @SaIgnore
 @RestController
@@ -22,7 +22,7 @@ public class BizScraperPostController {
     private final IBizScraperPostService scraperPostService;
 
     /**
-     * 保存采集业务数据
+     * 保存素材采集业务数据
      */
     @PostMapping("/save")
     public R<Void> save(@RequestBody BizScraperPost post) {
@@ -31,6 +31,19 @@ public class BizScraperPostController {
         }
         boolean res = scraperPostService.saveScrapedData(post);
         return res ? R.ok("插入成功") : R.ok("已跳过重复数据");
+    }
+
+    /**
+     * 查询素材采集列表
+     */
+    @SaIgnore
+    @GetMapping("/list")
+    public R<com.baomidou.mybatisplus.extension.plugins.pagination.Page<BizScraperPost>> list(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) String platform,
+            @RequestParam(required = false) String keyword) {
+        return R.ok(scraperPostService.selectPageList(pageNum, pageSize, platform, keyword));
     }
 
     /**
@@ -68,12 +81,23 @@ public class BizScraperPostController {
      * 更新帖子的媒体链接（Electron 采集器刷新后回传图片+视频）
      */
     @PutMapping("/updateMedia")
-    @SuppressWarnings("unchecked")
     public R<Void> updateMedia(@RequestBody Map<String, Object> params) {
         Long scraperId = Long.valueOf(params.get("scraperId").toString());
         String images = (String) params.get("images");
         String videos = (String) params.get("videos");
         scraperPostService.updateMedia(scraperId, images, videos);
         return R.ok("媒体链接已更新");
+    }
+
+    /**
+     * 更新复刻后的素材结果
+     */
+    @SaIgnore
+    @PutMapping("/updateRestyle")
+    public R<Void> updateRestyle(@RequestBody Map<String, Object> params) {
+        Long scraperId = Long.valueOf(params.get("scraperId").toString());
+        String restyleInfo = (String) params.get("restyleInfo");
+        scraperPostService.updateRestyleInfo(scraperId, restyleInfo);
+        return R.ok("复刻素材已记录");
     }
 }

@@ -41,4 +41,16 @@ public interface IBizScraperPostService {
      * @param videos 新的视频JSON
      */
     void updateMedia(Long scraperId, String images, String videos);
+    /**
+     * 分页查询采集结果
+     * @param platform 平台(可选)
+     * @param keyword 关键词(可选)
+     * @return 分页数据
+     */
+    com.baomidou.mybatisplus.extension.plugins.pagination.Page<BizScraperPost> selectPageList(Integer pageNum, Integer pageSize, String platform, String keyword);
+
+    /**
+     * 更新素材复刻信息
+     */
+    void updateRestyleInfo(Long scraperId, String restyleInfo);
 }
