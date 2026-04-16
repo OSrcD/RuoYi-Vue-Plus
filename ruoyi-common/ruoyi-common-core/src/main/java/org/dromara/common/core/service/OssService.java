@@ -2,6 +2,7 @@ package org.dromara.common.core.service;
 
 import org.dromara.common.core.domain.dto.OssDTO;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -26,4 +27,6 @@ public interface OssService {
      * @return 列表
      */
     List<OssDTO> selectByIds(String ossIds);
+
+    OssDTO uploadFiled(File file);
 }

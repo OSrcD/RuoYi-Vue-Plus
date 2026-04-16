@@ -73,9 +73,9 @@ spring:
   servlet:
     multipart:
       # 单个文件大小
-      max-file-size: 10MB
+      max-file-size: 1000MB
       # 设置总上传的文件大小
-      max-request-size: 20MB
+      max-request-size: 2000MB
   mvc:
     # 设置静态资源路径 防止所有请求都去查静态资源
     static-path-pattern: /static/**
@@ -183,7 +183,9 @@ api-decrypt:
 springdoc:
   api-docs:
     # 是否开启接口文档
-    enabled: false
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html  # 这里定义了 UI 的路径
   info:
     # 标题
     title: '标题：RuoYi-Vue-Plus多租户管理系统_接口文档'
@@ -208,6 +210,8 @@ springdoc:
       packages-to-scan: org.dromara.generator
     - group: 5.工作流模块
       packages-to-scan: org.dromara.workflow
+    - group: 6.业务模块
+      packages-to-scan: org.dromara.business
 
 # 防止XSS攻击
 xss:

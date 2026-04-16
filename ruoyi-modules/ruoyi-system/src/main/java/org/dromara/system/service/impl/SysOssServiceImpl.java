@@ -233,6 +233,20 @@ public class SysOssServiceImpl implements ISysOssService, OssService {
         return buildResultEntity(originalfileName, suffix, storage.getConfigKey(), uploadResult, ext1);
     }
 
+    /**
+     * 上传文件到对象存储服务，并保存文件信息到数据库
+     *
+     * @param file 要上传的文件对象
+     * @return 上传成功后的 SysOssVo 对象，包含文件信息
+     */
+    @Override
+    public OssDTO uploadFiled(File file) {
+        SysOssVo sysOssVo = upload(file);
+        OssDTO ossDTO = new OssDTO();
+        BeanUtil.copyProperties(sysOssVo, ossDTO);
+        return ossDTO;
+    }
+
     @NotNull
     private SysOssVo buildResultEntity(String originalfileName, String suffix, String configKey, UploadResult uploadResult, SysOssExt ext1) {
         SysOss oss = new SysOss();

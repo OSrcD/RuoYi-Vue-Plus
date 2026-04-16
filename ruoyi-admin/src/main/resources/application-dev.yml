@@ -273,3 +273,24 @@ justauth:
       client-id: 10**********6
       client-secret: 1f7d08**********5b7**********29e
       redirect-uri: ${justauth.address}/social-callback?source=gitea
+
+--- # Spring AI Gemini 配置
+spring:
+  ai:
+    google:
+      genai:
+        # API Key 申请地址: https://aistudio.google.com/app/apikey (需要美国、日本等可用地区的 API Key)
+#        api-key: AIzaSyBZunhyGhOq0i3VBalEyvF1pZk_jKB5p5Q
+        api-key: AIzaSyA3FOuX7VwS8S7zcvR8ULSvtCCOipt1DzA
+        chat:
+          options:
+            # 2026年官方推荐：Gemini 3.1 系列
+            # Fast: Answers quickly
+            model-fast: gemini-3-flash-preview
+            # Thinking: Solves complex problems (3.1 Pro 具备思考能力)
+            model-thinking: gemini-3.1-pro-preview
+            # Pro: Advanced math and code
+            model-pro: gemini-3.1-pro-preview
+            # 默认模型 (Fast)
+            model: gemini-3-flash-preview
+            temperature: 0.7
