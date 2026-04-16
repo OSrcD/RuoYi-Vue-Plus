@@ -280,8 +280,8 @@ spring:
     google:
       genai:
         # API Key 申请地址: https://aistudio.google.com/app/apikey (需要美国、日本等可用地区的 API Key)
-#        api-key: AIzaSyBZunhyGhOq0i3VBalEyvF1pZk_jKB5p5Q
-        api-key: AIzaSyA3FOuX7VwS8S7zcvR8ULSvtCCOipt1DzA
+#        api-key:
+        api-key:
         chat:
           options:
             # 2026年官方推荐：Gemini 3.1 系列
