@@ -82,6 +82,16 @@ public class BizVideoReproduceFrame extends BaseEntity {
     private String generatedVideoUrl;
 
     /**
+     * 上传的音频URL
+     */
+    private String audioUrl;
+
+    /**
+     * 音频配置信息（如对齐、裁剪点等）
+     */
+    private String audioConfigJson;
+
+    /**
      * 上一次视频结果(支持撤回)
      */
     private String prevVideoUrl;

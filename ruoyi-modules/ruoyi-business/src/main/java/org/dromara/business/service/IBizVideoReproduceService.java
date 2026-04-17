@@ -1,5 +1,6 @@
 package org.dromara.business.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.dromara.business.domain.bo.BizVideoReproduceTaskBo;
 import org.dromara.business.domain.vo.BizVideoReproduceTaskVo;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -21,7 +22,12 @@ public interface IBizVideoReproduceService {
     /**
      * 创建复刻任务
      */
-    Long createAndStartTask(MultipartFile videoFile, String productConfigJson, MultipartFile[] charImages, MultipartFile[] productImages);
+    Long createAndStartTask(MultipartFile videoFile, String productConfigJson, MultipartFile[] charImages, MultipartFile[] productImages, String execMode);
+
+    /**
+     * 在拿到分析的JSON后继续完整的后续流程（保存全局锁、截帧）
+     */
+    void continueFullWorkflowAfterAnalysis(Long taskId, String resultJson);
 
     /**
      * 重试任务
@@ -31,7 +37,7 @@ public interface IBizVideoReproduceService {
     /**
      * 一键生成所有视频
      */
-    void generateAllVideos(Long taskId);
+    void generateAllVideos(Long taskId, String execMode);
 
     /**
      * 获取任务下的截帧
@@ -41,12 +47,12 @@ public interface IBizVideoReproduceService {
     /**
      * 单帧洗图
      */
-    void washImage(Long frameId, String washMode, String customPrompt, List<String> refImages);
+    void washImage(Long frameId, String washMode, String customPrompt, List<String> refImages, String execMode);
 
     /**
      * 一键全部洗图
      */
-    void washAllImages(Long taskId, String washMode, String customPrompt, List<String> refImages);
+    void washAllImages(Long taskId, String washMode, String customPrompt, List<String> refImages, String execMode);
 
     /**
      * 撤回洗图
@@ -56,7 +62,7 @@ public interface IBizVideoReproduceService {
     /**
      * 单帧生成视频
      */
-    void generateVideo(Long frameId);
+    void generateVideo(Long frameId, String execMode);
 
     /**
      * 撤回视频
@@ -72,4 +78,48 @@ public interface IBizVideoReproduceService {
      * 对生成的视频进行剪辑（去除指定区间并拼接）
      */
     void clipVideo(Long frameId, java.util.List<java.util.Map<String, Double>> removeRanges);
+    /**
+     * 合成全片视频
+     */
+    void mergeVideos(Long taskId);
+
+    /**
+     * 为单帧绑定/上传音频
+     */
+    void bindAudio(Long frameId, MultipartFile audioFile);
+
+    /**
+     * 自动裁剪音频（移除前后静音）
+     */
+    void autoTrimAudio(Long frameId);
+
+    /**
+     * 手动裁剪音频
+     */
+    void manualTrimAudio(Long frameId, Double start, Double end);
+
+    /**
+     * 将音频同步到生成的视频中（口型对准/静音替换）
+     */
+    void syncAudioToVideo(Long frameId);
+
+    /**
+     * 更新单帧提示词
+     */
+    void updateFramePrompts(Long frameId, String promptEn, String promptZh);
+
+    /**
+     * 手动重新截取关键帧
+     */
+    void recaptureFrame(Long frameId, Double timestamp);
+
+    /**
+     * 手动上传生成的视频（替换 Veo 结果）
+     */
+    void uploadGeneratedVideo(Long frameId, MultipartFile videoFile);
+
+    /**
+     * 下载生成的视频中的音频
+     */
+    void downloadAudio(Long frameId, HttpServletResponse response);
 }

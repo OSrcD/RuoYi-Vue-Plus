@@ -69,6 +69,11 @@ public class BizVideoReproduceTaskVo implements Serializable {
     private String errorMsg;
 
     /**
+     * 合成后的全片URL
+     */
+    private String combinedVideoUrl;
+
+    /**
      * 创建者
      */
     private Long createBy;

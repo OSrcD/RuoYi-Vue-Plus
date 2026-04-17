@@ -29,6 +29,11 @@ public interface IBizGeminiVideoService {
      */
     String generateVeo3Json(String videoUrl, String productConfigJson, java.util.List<String> charImageUrls,
             java.util.List<String> productImageUrls, String mode);
+            
+    /**
+     * 获取经过替换的Veo3连环提示词列表（分别对应三个阶段）
+     */
+    java.util.List<String> getVeo3Prompts(String productConfigJson);
 
     /**
      * 对截帧图进行AI洗图分析
@@ -63,4 +68,9 @@ public interface IBizGeminiVideoService {
      * @return 生成视频的字节数组（MP4格式）
      */
     byte[] generateVideoFromImage(String imageUrl, String prompt, java.util.List<String> referenceImageUrls);
+    /**
+     * 获取图片洗图相关的提示词模板
+     * @return 包含 "analyze" 和 "restyle" 提示词的 Map
+     */
+    java.util.Map<String, String> getImageWashTemplates();
 }

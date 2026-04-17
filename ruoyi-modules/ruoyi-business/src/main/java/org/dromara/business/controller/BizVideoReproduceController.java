@@ -1,5 +1,6 @@
 package org.dromara.business.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.business.domain.BizVideoReproduceFrame;
 import org.dromara.business.domain.bo.BizVideoReproduceTaskBo;
@@ -43,8 +44,9 @@ public class BizVideoReproduceController extends BaseController {
     public R<Long> create(@RequestPart("video") MultipartFile video,
                           @RequestParam(value = "productConfigJson", required = false) String productConfigJson,
                           @RequestPart(value = "charImages", required = false) MultipartFile[] charImages,
-                          @RequestPart(value = "productImages", required = false) MultipartFile[] productImages) {
-        return R.ok(videoReproduceService.createAndStartTask(video, productConfigJson, charImages, productImages));
+                          @RequestPart(value = "productImages", required = false) MultipartFile[] productImages,
+                          @RequestParam(value = "execMode", defaultValue = "api") String execMode) {
+        return R.ok(videoReproduceService.createAndStartTask(video, productConfigJson, charImages, productImages, execMode));
     }
 
     /**
@@ -60,8 +62,8 @@ public class BizVideoReproduceController extends BaseController {
      * 一键生成视频
      */
     @PostMapping("/generateAll/{taskId}")
-    public R<Void> generateAll(@PathVariable Long taskId) {
-        videoReproduceService.generateAllVideos(taskId);
+    public R<Void> generateAll(@PathVariable Long taskId, @RequestParam(value = "execMode", required = false, defaultValue = "api") String execMode) {
+        videoReproduceService.generateAllVideos(taskId, execMode);
         return R.ok();
     }
 
@@ -80,8 +82,9 @@ public class BizVideoReproduceController extends BaseController {
     public R<Void> washImage(@PathVariable Long frameId,
                              @RequestParam(value = "washMode", required = false, defaultValue = "original") String washMode,
                              @RequestParam(value = "customPrompt", required = false) String customPrompt,
+                             @RequestParam(value = "execMode", required = false, defaultValue = "api") String execMode,
                              @RequestBody(required = false) List<String> refImages) {
-        videoReproduceService.washImage(frameId, washMode, customPrompt, refImages);
+        videoReproduceService.washImage(frameId, washMode, customPrompt, refImages, execMode);
         return R.ok();
     }
 
@@ -92,8 +95,9 @@ public class BizVideoReproduceController extends BaseController {
     public R<Void> washAllImages(@PathVariable Long taskId,
                                  @RequestParam(value = "washMode", required = false, defaultValue = "original") String washMode,
                                  @RequestParam(value = "customPrompt", required = false) String customPrompt,
+                                 @RequestParam(value = "execMode", required = false, defaultValue = "api") String execMode,
                                  @RequestBody(required = false) List<String> refImages) {
-        videoReproduceService.washAllImages(taskId, washMode, customPrompt, refImages);
+        videoReproduceService.washAllImages(taskId, washMode, customPrompt, refImages, execMode);
         return R.ok();
     }
 
@@ -110,8 +114,8 @@ public class BizVideoReproduceController extends BaseController {
      * 单帧生成视频
      */
     @PostMapping("/generateVideo/{frameId}")
-    public R<Void> generateVideo(@PathVariable Long frameId) {
-        videoReproduceService.generateVideo(frameId);
+    public R<Void> generateVideo(@PathVariable Long frameId, @RequestParam(value = "execMode", required = false, defaultValue = "api") String execMode) {
+        videoReproduceService.generateVideo(frameId, execMode);
         return R.ok();
     }
 
@@ -140,5 +144,85 @@ public class BizVideoReproduceController extends BaseController {
     public R<Void> clipVideo(@PathVariable Long frameId, @RequestBody java.util.List<java.util.Map<String, Double>> removeRanges) {
         videoReproduceService.clipVideo(frameId, removeRanges);
         return R.ok();
+    }
+
+    /**
+     * 合成全片视频
+     */
+    @PostMapping("/mergeVideos/{taskId}")
+    public R<Void> mergeVideos(@PathVariable Long taskId) {
+        videoReproduceService.mergeVideos(taskId);
+        return R.ok();
+    }
+
+    /**
+     * 为单帧绑定音频
+     */
+    @PostMapping("/bindAudio/{frameId}")
+    public R<Void> bindAudio(@PathVariable Long frameId, @RequestPart("audio") MultipartFile audio) {
+        videoReproduceService.bindAudio(frameId, audio);
+        return R.ok();
+    }
+
+    /**
+     * 自动裁剪音频（移除前后静音）
+     */
+    @PostMapping("/autoTrimAudio/{frameId}")
+    public R<Void> autoTrimAudio(@PathVariable Long frameId) {
+        videoReproduceService.autoTrimAudio(frameId);
+        return R.ok();
+    }
+
+    /**
+     * 手动裁剪音频
+     */
+    @PostMapping("/manualTrimAudio/{frameId}")
+    public R<Void> manualTrimAudio(@PathVariable Long frameId, @RequestParam Double start, @RequestParam Double end) {
+        videoReproduceService.manualTrimAudio(frameId, start, end);
+        return R.ok();
+    }
+
+    /**
+     * 将音频同步到视频（音画对齐）
+     */
+    @PostMapping("/syncAudioToVideo/{frameId}")
+    public R<Void> syncAudioToVideo(@PathVariable Long frameId) {
+        videoReproduceService.syncAudioToVideo(frameId);
+        return R.ok();
+    }
+
+    /**
+     * 更新单帧提示词
+     */
+    @PostMapping("/updatePrompts/{frameId}")
+    public R<Void> updatePrompts(@PathVariable Long frameId, @RequestBody java.util.Map<String, String> data) {
+        videoReproduceService.updateFramePrompts(frameId, data.get("promptEn"), data.get("promptZh"));
+        return R.ok();
+    }
+
+    /**
+     * 手动重新截取关键帧
+     */
+    @PostMapping("/recaptureFrame/{frameId}")
+    public R<Void> recaptureFrame(@PathVariable Long frameId, @RequestParam Double timestamp) {
+        videoReproduceService.recaptureFrame(frameId, timestamp);
+        return R.ok();
+    }
+
+    /**
+     * 手动上传生成的视频（替换 Veo 结果）
+     */
+    @PostMapping("/uploadGeneratedVideo/{frameId}")
+    public R<Void> uploadGeneratedVideo(@PathVariable Long frameId, @RequestPart("video") MultipartFile video) {
+        videoReproduceService.uploadGeneratedVideo(frameId, video);
+        return R.ok();
+    }
+
+    /**
+     * 下载生成的视频中的音频
+     */
+    @GetMapping("/downloadAudio/{frameId}")
+    public void downloadAudio(@PathVariable Long frameId, HttpServletResponse response) {
+        videoReproduceService.downloadAudio(frameId, response);
     }
 }

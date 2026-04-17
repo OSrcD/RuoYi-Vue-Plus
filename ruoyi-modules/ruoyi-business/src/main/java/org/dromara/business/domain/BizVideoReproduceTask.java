@@ -62,6 +62,11 @@ public class BizVideoReproduceTask extends BaseEntity {
     private String errorMsg;
 
     /**
+     * 合成后的全片URL
+     */
+    private String combinedVideoUrl;
+
+    /**
      * 租户编号
      */
     private String tenantId;

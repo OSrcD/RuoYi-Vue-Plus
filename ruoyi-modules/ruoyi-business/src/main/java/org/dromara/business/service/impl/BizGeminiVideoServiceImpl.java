@@ -83,6 +83,50 @@ public class BizGeminiVideoServiceImpl implements IBizGeminiVideoService {
     private final org.dromara.business.service.IBizPromptTemplateService promptTemplateService;
 
     @Override
+    public java.util.List<String> getVeo3Prompts(String productConfigJson) {
+        String prompt1 = getPromptByTemplateType(8L, "（缺失提示词1：veo3.1-短视频分镜逆向工程师）");
+        String prompt2 = getPromptByTemplateType(9L, "（缺失提示词2：veo3.1-短视频8秒生成单元无损改写器）");            // 如果有配置，解析前端传来的JSON并替换模板中的 [填写] 占位符
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(productConfigJson)) {
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                com.fasterxml.jackson.databind.JsonNode config = mapper.readTree(productConfigJson);
+
+                String brandName = config.path("brandName").asText("");
+                String sellingPoints = config.path("sellingPoints").isArray()
+                    ? String.join("，", mapper.convertValue(config.path("sellingPoints"), String[].class))
+                    : config.path("sellingPoints").asText("");
+                String targetAudience = config.path("targetAudience").asText("");
+                String p1 = config.path("painPoints").isArray() && config.path("painPoints").size() > 0
+                    ? config.path("painPoints").get(0).asText("")
+                    : "";
+                String p2 = config.path("painPoints").isArray() && config.path("painPoints").size() > 1
+                    ? config.path("painPoints").get(1).asText("")
+                    : "";
+                String p3 = config.path("painPoints").isArray() && config.path("painPoints").size() > 2
+                    ? config.path("painPoints").get(2).asText("")
+                    : "";
+
+                prompt2 = prompt2.replace("品牌/产品名称: [填写]", "品牌/产品名称: " + brandName)
+                    .replace("产品核心卖点: [填写，最多3条]", "产品核心卖点: " + sellingPoints)
+                    .replace("目标用户群体: [填写]", "目标用户群体: " + targetAudience)
+                    .replace("痛点一: [填写]", "痛点一: " + p1)
+                    .replace("痛点二: [填写]", "痛点二: " + p2)
+                    .replace("痛点三: [填写]", "痛点三: " + p3);
+                log.info("已成功将前端传入的JSON配置替换进第二步提示词模板中");
+            } catch (Exception e) {
+                log.warn("无法解析产品配置JSON，忽略产品配置注入", e);
+            }
+        }
+        String prompt3 = getPromptByTemplateType(10L, "（缺失提示词3：veo3.1-短视频8秒生成单元模板复刻导演）");
+        
+        java.util.List<String> list = new java.util.ArrayList<>();
+        list.add(prompt1);
+        list.add(prompt2);
+        list.add(prompt3);
+        return list;
+    }
+
+    @Override
     public String generateVeo3Json(String videoUrl, String productConfigJson, java.util.List<String> charImageUrls, java.util.List<String> productImageUrls, String mode) {
         try {
             if (org.apache.commons.lang3.StringUtils.isBlank(videoUrl)) {
@@ -91,40 +135,10 @@ public class BizGeminiVideoServiceImpl implements IBizGeminiVideoService {
             log.info("开始执行Veo3视频连环提示词分析任务: {}", videoUrl);
 
             // 1. 从接口查询 3 套提示词
-            String prompt1 = getPromptByTemplateType(8L, "（缺失提示词1：veo3.1-短视频分镜逆向工程师）");
-            String prompt2 = getPromptByTemplateType(9L, "（缺失提示词2：veo3.1-短视频8秒生成单元无损改写器）");            // 如果有配置，解析前端传来的JSON并替换模板中的 [填写] 占位符
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(productConfigJson)) {
-                try {
-                    com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-                    com.fasterxml.jackson.databind.JsonNode config = mapper.readTree(productConfigJson);
-
-                    String brandName = config.path("brandName").asText("");
-                    String sellingPoints = config.path("sellingPoints").isArray()
-                        ? String.join("，", mapper.convertValue(config.path("sellingPoints"), String[].class))
-                        : config.path("sellingPoints").asText("");
-                    String targetAudience = config.path("targetAudience").asText("");
-                    String p1 = config.path("painPoints").isArray() && config.path("painPoints").size() > 0
-                        ? config.path("painPoints").get(0).asText("")
-                        : "";
-                    String p2 = config.path("painPoints").isArray() && config.path("painPoints").size() > 1
-                        ? config.path("painPoints").get(1).asText("")
-                        : "";
-                    String p3 = config.path("painPoints").isArray() && config.path("painPoints").size() > 2
-                        ? config.path("painPoints").get(2).asText("")
-                        : "";
-
-                    prompt2 = prompt2.replace("品牌/产品名称: [填写]", "品牌/产品名称: " + brandName)
-                        .replace("产品核心卖点: [填写，最多3条]", "产品核心卖点: " + sellingPoints)
-                        .replace("目标用户群体: [填写]", "目标用户群体: " + targetAudience)
-                        .replace("痛点一: [填写]", "痛点一: " + p1)
-                        .replace("痛点二: [填写]", "痛点二: " + p2)
-                        .replace("痛点三: [填写]", "痛点三: " + p3);
-                    log.info("已成功将前端传入的JSON配置替换进第二步提示词模板中");
-                } catch (Exception e) {
-                    log.warn("无法解析产品配置JSON，忽略产品配置注入", e);
-                }
-            }
-            String prompt3 = getPromptByTemplateType(10L, "（缺失提示词3：veo3.1-短视频8秒生成单元模板复刻导演）");
+            java.util.List<String> prompts = getVeo3Prompts(productConfigJson);
+            String prompt1 = prompts.get(0);
+            String prompt2 = prompts.get(1);
+            String prompt3 = prompts.get(2);
 
 
 
@@ -657,5 +671,12 @@ public class BizGeminiVideoServiceImpl implements IBizGeminiVideoService {
             log.error("Veo 3.1 图生视频异常", e);
             throw new RuntimeException("图生视频失败: " + e.getMessage(), e);
         }
+    }
+    @Override
+    public java.util.Map<String, String> getImageWashTemplates() {
+        java.util.Map<String, String> templates = new java.util.HashMap<>();
+        templates.put("analyze", getPromptByTemplateType(4L, "请分析这张图片中的人物特征、产品特征、场景构图、光线等关键信息，用于后续的图片重绘。"));
+        templates.put("restyle", getPromptByTemplateType(5L, "基于上述分析结果，生成一段详细的图片重绘提示词（英文），要求保留原图构图和姿态，但替换人物和产品为参考图中的形象。"));
+        return templates;
     }
 }
