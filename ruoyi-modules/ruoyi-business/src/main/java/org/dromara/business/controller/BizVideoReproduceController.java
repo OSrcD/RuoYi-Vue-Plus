@@ -41,7 +41,7 @@ public class BizVideoReproduceController extends BaseController {
      * @param productImages 商品参考图
      */
     @PostMapping("/create")
-    public R<Long> create(@RequestPart("video") MultipartFile video,
+    public R<BizVideoReproduceTaskVo> create(@RequestPart("video") MultipartFile video,
                           @RequestParam(value = "productConfigJson", required = false) String productConfigJson,
                           @RequestPart(value = "charImages", required = false) MultipartFile[] charImages,
                           @RequestPart(value = "productImages", required = false) MultipartFile[] productImages,

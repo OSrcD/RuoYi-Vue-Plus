@@ -64,7 +64,7 @@ public class BizVideoReproduceServiceImpl implements IBizVideoReproduceService {
     }
 
     @Override
-    public Long createAndStartTask(MultipartFile videoFile, String productConfigJson, MultipartFile[] charImages,
+    public BizVideoReproduceTaskVo createAndStartTask(MultipartFile videoFile, String productConfigJson, MultipartFile[] charImages,
             MultipartFile[] productImages, String execMode) {
         // 1. 上传视频
         String originalVideoUrl = "";
@@ -111,7 +111,7 @@ public class BizVideoReproduceServiceImpl implements IBizVideoReproduceService {
             startFullWorkflow(task.getTaskId());
         }
 
-        return task.getTaskId();
+        return taskMapper.selectVoById(task.getTaskId());
     }
 
     @Async

@@ -22,7 +22,7 @@ public interface IBizVideoReproduceService {
     /**
      * 创建复刻任务
      */
-    Long createAndStartTask(MultipartFile videoFile, String productConfigJson, MultipartFile[] charImages, MultipartFile[] productImages, String execMode);
+    BizVideoReproduceTaskVo createAndStartTask(MultipartFile videoFile, String productConfigJson, MultipartFile[] charImages, MultipartFile[] productImages, String execMode);
 
     /**
      * 在拿到分析的JSON后继续完整的后续流程（保存全局锁、截帧）
