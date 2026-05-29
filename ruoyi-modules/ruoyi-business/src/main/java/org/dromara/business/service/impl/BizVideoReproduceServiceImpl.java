@@ -3,6 +3,7 @@ package org.dromara.business.service.impl;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -955,12 +956,33 @@ public class BizVideoReproduceServiceImpl implements IBizVideoReproduceService {
 
     @Override
     @Async
-    public void mergeVideos(Long taskId) {
-        log.info("开始合成全片视频, taskId: {}", taskId);
+    public void mergeVideos(Long taskId, List<Long> frameIds) {
+        log.info(">>>> 合成指令下发 - 任务ID: {}, 接收到的原始片段IDs: {}", taskId, frameIds);
+        
         BizVideoReproduceTask task = taskMapper.selectById(taskId);
-        if (task == null) return;
+        if (task == null) {
+            log.error("合成失败：任务 {} 不存在", taskId);
+            return;
+        }
 
-        List<BizVideoReproduceFrame> frames = getFrames(taskId);
+        List<BizVideoReproduceFrame> frames;
+        if (frameIds != null && !frameIds.isEmpty()) {
+            log.info("进入[指定片段]合成模式, 计划合成数量: {}", frameIds.size());
+            frames = new ArrayList<>();
+            for (Long fid : frameIds) {
+                BizVideoReproduceFrame f = frameMapper.selectById(fid);
+                // 增加归属校验，防止意外数据
+                if (f != null && f.getTaskId().equals(taskId)) {
+                    frames.add(f);
+                } else {
+                    log.warn("跳过无效或不属于该任务的帧ID: {}", fid);
+                }
+            }
+            log.info("最终有效选取片段数量: {}", frames.size());
+        } else {
+            log.info("进入[默认全片]合成模式");
+            frames = getFrames(taskId);
+        }
         List<File> videoFiles = new ArrayList<>();
 
         try {
@@ -1089,6 +1111,38 @@ public class BizVideoReproduceServiceImpl implements IBizVideoReproduceService {
             frameMapper.updateById(frame);
         }
     }
+    @Override
+    public void deleteFrame(Long frameId) {
+        frameMapper.deleteById(frameId);
+    }
+
+    @Override
+    public void deleteGeneratedVideo(Long frameId) {
+        LambdaUpdateWrapper<BizVideoReproduceFrame> luw = new LambdaUpdateWrapper<>();
+        luw.eq(BizVideoReproduceFrame::getFrameId, frameId)
+           .set(BizVideoReproduceFrame::getGeneratedVideoUrl, null)
+           .set(BizVideoReproduceFrame::getPrevVideoUrl, null);
+        frameMapper.update(null, luw);
+    }
+
+    @Override
+    public void deletePolishedImage(Long frameId) {
+        LambdaUpdateWrapper<BizVideoReproduceFrame> luw = new LambdaUpdateWrapper<>();
+        luw.eq(BizVideoReproduceFrame::getFrameId, frameId)
+           .set(BizVideoReproduceFrame::getPolishedImageUrl, null)
+           .set(BizVideoReproduceFrame::getPrevPolishedUrl, null)
+           .set(BizVideoReproduceFrame::getStatus, "1"); // 回到已截帧状态
+        frameMapper.update(null, luw);
+    }
+
+    @Override
+    public void deleteOriginalImage(Long frameId) {
+        LambdaUpdateWrapper<BizVideoReproduceFrame> luw = new LambdaUpdateWrapper<>();
+        luw.eq(BizVideoReproduceFrame::getFrameId, frameId)
+           .set(BizVideoReproduceFrame::getOriginalImageUrl, null);
+        frameMapper.update(null, luw);
+    }
+
 
     @Override
     public void recaptureFrame(Long frameId, Double timestamp) {
@@ -1219,6 +1273,34 @@ public class BizVideoReproduceServiceImpl implements IBizVideoReproduceService {
         } finally {
             cn.hutool.core.io.FileUtil.del(tempVideo);
             cn.hutool.core.io.FileUtil.del(tempAudio);
+        }
+    }
+
+    @Override
+    public void uploadOriginalImage(Long frameId, MultipartFile imageFile) {
+        BizVideoReproduceFrame frame = frameMapper.selectById(frameId);
+        if (frame == null) {
+            throw new ServiceException("制作单元不存在");
+        }
+        try {
+            File temp = saveToTemp(imageFile);
+            try {
+                OssDTO oss = ossService.uploadFiled(temp);
+                frame.setOriginalImageUrl(oss.getUrl());
+                
+                // 如果之前有洗图图片，考虑是否需要清理或保留。通常上传新原图会重置洗图和生成结果
+                // 这里我们暂且仅替换原图，具体的业务逻辑可以视需要补充重置状态操作。
+                // frame.setPolishedImageUrl(null);
+                // frame.setGeneratedVideoUrl(null);
+                // frame.setStatus("1"); // 回到截帧就绪状态
+                
+                frameMapper.updateById(frame);
+            } finally {
+                cn.hutool.core.io.FileUtil.del(temp);
+            }
+        } catch (Exception e) {
+            log.error("上传原始图片失败", e);
+            throw new ServiceException("图片上传失败: " + e.getMessage());
         }
     }
 }

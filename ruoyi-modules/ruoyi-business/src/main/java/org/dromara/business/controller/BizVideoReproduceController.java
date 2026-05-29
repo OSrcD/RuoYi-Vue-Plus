@@ -150,9 +150,16 @@ public class BizVideoReproduceController extends BaseController {
      * 合成全片视频
      */
     @PostMapping("/mergeVideos/{taskId}")
-    public R<Void> mergeVideos(@PathVariable Long taskId) {
-        videoReproduceService.mergeVideos(taskId);
+    public R<Void> mergeVideos(@PathVariable Long taskId, @RequestBody(required = false) MergeVideoRequest request) {
+        List<Long> frameIds = request != null ? request.getFrameIds() : null;
+        videoReproduceService.mergeVideos(taskId, frameIds);
         return R.ok();
+    }
+
+    public static class MergeVideoRequest {
+        private List<Long> frameIds;
+        public List<Long> getFrameIds() { return frameIds; }
+        public void setFrameIds(List<Long> frameIds) { this.frameIds = frameIds; }
     }
 
     /**
@@ -201,6 +208,42 @@ public class BizVideoReproduceController extends BaseController {
     }
 
     /**
+     * 删除制作单元
+     */
+    @DeleteMapping("/frame/{frameId}")
+    public R<Void> deleteFrame(@PathVariable Long frameId) {
+        videoReproduceService.deleteFrame(frameId);
+        return R.ok();
+    }
+
+    /**
+     * 删除生成的视频
+     */
+    @DeleteMapping("/frame/video/{frameId}")
+    public R<Void> deleteVideo(@PathVariable Long frameId) {
+        videoReproduceService.deleteGeneratedVideo(frameId);
+        return R.ok();
+    }
+
+    /**
+     * 删除 AI 洗图
+     */
+    @DeleteMapping("/frame/wash/{frameId}")
+    public R<Void> deleteWash(@PathVariable Long frameId) {
+        videoReproduceService.deletePolishedImage(frameId);
+        return R.ok();
+    }
+
+    /**
+     * 删除原始图片
+     */
+    @DeleteMapping("/frame/image/{frameId}")
+    public R<Void> deleteOriginalImage(@PathVariable Long frameId) {
+        videoReproduceService.deleteOriginalImage(frameId);
+        return R.ok();
+    }
+
+    /**
      * 手动重新截取关键帧
      */
     @PostMapping("/recaptureFrame/{frameId}")
@@ -224,5 +267,14 @@ public class BizVideoReproduceController extends BaseController {
     @GetMapping("/downloadAudio/{frameId}")
     public void downloadAudio(@PathVariable Long frameId, HttpServletResponse response) {
         videoReproduceService.downloadAudio(frameId, response);
+    }
+
+    /**
+     * 手动上传原始对标图片（替换原有的提取帧）
+     */
+    @PostMapping("/uploadOriginalImage/{frameId}")
+    public R<Void> uploadOriginalImage(@PathVariable Long frameId, @RequestPart("image") MultipartFile image) {
+        videoReproduceService.uploadOriginalImage(frameId, image);
+        return R.ok();
     }
 }

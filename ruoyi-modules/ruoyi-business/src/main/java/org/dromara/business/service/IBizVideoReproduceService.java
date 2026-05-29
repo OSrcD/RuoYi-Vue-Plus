@@ -29,6 +29,8 @@ public interface IBizVideoReproduceService {
      */
     void continueFullWorkflowAfterAnalysis(Long taskId, String resultJson);
 
+    void syncAudioToVideo(Long frameId);
+
     /**
      * 重试任务
      */
@@ -81,7 +83,7 @@ public interface IBizVideoReproduceService {
     /**
      * 合成全片视频
      */
-    void mergeVideos(Long taskId);
+    void mergeVideos(Long taskId, List<Long> frameIds);
 
     /**
      * 为单帧绑定/上传音频
@@ -99,14 +101,29 @@ public interface IBizVideoReproduceService {
     void manualTrimAudio(Long frameId, Double start, Double end);
 
     /**
-     * 将音频同步到生成的视频中（口型对准/静音替换）
-     */
-    void syncAudioToVideo(Long frameId);
-
-    /**
      * 更新单帧提示词
      */
     void updateFramePrompts(Long frameId, String promptEn, String promptZh);
+
+    /**
+     * 删除制作单元（整个帧记录）
+     */
+    void deleteFrame(Long frameId);
+
+    /**
+     * 删除生成的视频
+     */
+    void deleteGeneratedVideo(Long frameId);
+
+    /**
+     * 删除 AI 洗图图片
+     */
+    void deletePolishedImage(Long frameId);
+
+    /**
+     * 删除原始截帧图片
+     */
+    void deleteOriginalImage(Long frameId);
 
     /**
      * 手动重新截取关键帧
@@ -117,6 +134,11 @@ public interface IBizVideoReproduceService {
      * 手动上传生成的视频（替换 Veo 结果）
      */
     void uploadGeneratedVideo(Long frameId, MultipartFile videoFile);
+
+    /**
+     * 手动上传原始对标图片（替换原有的源图片）
+     */
+    void uploadOriginalImage(Long frameId, MultipartFile imageFile);
 
     /**
      * 下载生成的视频中的音频
